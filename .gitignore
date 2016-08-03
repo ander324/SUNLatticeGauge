@@ -1,2 +1,5 @@
 #ignore temporary files from emacs 
 *~
+
+#ignore temporary bins
+a.out
