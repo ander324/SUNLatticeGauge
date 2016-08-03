@@ -1,0 +1,17 @@
+5 Nc
+0 Wilson Action
+8 L
+8 Nt
+4 dim
+25.0 Beta
+0.24 epsilon
+1000 n_cor
+150 n_cf
+150 RandomSUN
+10 UpdatesPerLink
+4 numGlueballOps
+0 gpuid
+0.797 u0
+0 sqaq_run
+1 xi
+y
