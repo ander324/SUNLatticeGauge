@@ -1,4 +1,3 @@
-
 #include <sstream>
 #include <fstream>
 #include <algorithm>
@@ -7,7 +6,8 @@
 #include <array>
 #include <complex>
 #include <CL/cl.h>
-
+#include "clRNG/clRNG.h"
+#include "clRNG/mrg31k3p.h"
 
 int main()
 {
@@ -26,13 +26,13 @@ int main()
 
 
 
-	std::ifstream file("testkernel.cl");
+	std::ifstream file("testrngkernel.cl");
 	std::string source( std::istreambuf_iterator<char>(file), (std::istreambuf_iterator<char>()));
 	size_t      sourceSize = source.size();
 	const char* sourcePtr  = source.c_str();
 	auto program = clCreateProgramWithSource(context, 1, &sourcePtr, &sourceSize, &status);
 	
-	status = clBuildProgram(program, 1, &device, "-I .", nullptr, nullptr);
+	status = clBuildProgram(program, 1, &device, "-I. -I/home/ander324/clRNG.build/package/include", nullptr, nullptr);
 	if (status != CL_SUCCESS)
 	{
 		size_t len = 0;
@@ -45,18 +45,28 @@ int main()
 		delete[] log;
 	}
 
-	auto kernel = clCreateKernel(program, "squarer", &status);
+	auto kernel = clCreateKernel(program, "testrng", &status);
 
-	std::array<std::complex<double>, 8> A{std::complex<double>(0.0,0.0),std::complex<double>(1.0,0.0),std::complex<double>(2.0,0.0),std::complex<double>(3.0,0.0),std::complex<double>(4.0,0.0),std::complex<double>(5.0,0.0),std::complex<double>(6.0,0.0),std::complex<double>(7.0,0.0)};
-	  std::for_each(A.begin(), A.end(), [](std::complex<double> x) { std::cout << x.real() <<'\t' << x.imag() << "\n"; });
 	std::array<std::complex<double>, 8> B;
-	auto buffer_in = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, A.size() * sizeof(std::complex<double>), A.data(), &status);
+
+	cl_int err;
+	size_t streamBufferSize;
+	clrngMrg31k3pStream* streams = clrngMrg31k3pCreateStreams(NULL, B.size(),
+								  &streamBufferSize, (clrngStatus *)&err);
+	//check_error(err, "cannot create random stream array");
+	
+
+
+	// Create buffer to transfer streams to the device.
+	cl_mem buffer_in = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+				       streamBufferSize, streams, &err);
+	
 	auto buffer_out = clCreateBuffer(context, CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR, B.size() * sizeof(std::complex<double>), B.data(), &status);
 
 	status = clSetKernelArg(kernel, 0, sizeof(buffer_in), &buffer_in);
 	status = clSetKernelArg(kernel, 1, sizeof(buffer_out), &buffer_out);
 
-	size_t thread_count = A.size();
+	size_t thread_count = B.size();
 	status = clEnqueueNDRangeKernel( queue, kernel, 1, nullptr, &thread_count, nullptr, 0, nullptr, nullptr);
 	status = clEnqueueReadBuffer(queue, buffer_out, false, 0, B.size() * sizeof(std::complex<double>), B.data(), 0, nullptr, nullptr);
 	status = clFinish(queue);

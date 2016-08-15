@@ -30,6 +30,8 @@
 
 #pragma once
 
+#define PYOPENCL_DEFINE_CDOUBLE
+
 #define PYOPENCL_DECLARE_COMPLEX_TYPE_INT(REAL_TP, REAL_3LTR, TPROOT, TP) \
     \
   REAL_TP TPROOT##_real(TP a) { return a.real; } \
