@@ -9,7 +9,7 @@
 #include "clRNG/clRNG.h"
 #include "clRNG/mrg31k3p.h"
 
-const int Nc = 3;
+const int Nc = 6;
 
 
 typedef struct {
@@ -90,6 +90,15 @@ int main()
   status = clEnqueueReadBuffer(queue, buffer_randSUN, false, 0, B.size() * sizeof(matrix), B.data(), 0, nullptr, nullptr);
   status = clFinish(queue);
   //  std::for_each(B.begin(), B.end(), [](std::complex<double> x) { std::cout << x.real() <<'\t' << x.imag() << "\n"; });
+    printf("%s","\n");
+  for(int r=0; r<Nc; r++){
+    for( int c=0; c<Nc; c++){
+      printf("(%f, %f)\t",B[0].a[r][c].real(), B[0].a[r][c].imag());
+    }
+    printf("%s","\n");
+    //printf("\n");
+  }
+  printf("%s","\n");
 
 
   

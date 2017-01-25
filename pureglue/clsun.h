@@ -9,8 +9,8 @@ Date: 8-3-2016
 
 #include "openclcomplex.h"
 #define _matrixsun matrix
+#include "defines.h"
 
-#define Nc 3
 
 typedef struct {
   cdouble_t a[Nc][Nc];
@@ -77,6 +77,21 @@ _matrixsun m_mul_nn( _matrixsun A, _matrixsun B){
   return C;
 }
 
+
+// A*B^\dagger -> C
+_matrixsun m_mul_na( _matrixsun A, _matrixsun B){
+  _matrixsun C;
+  cdouble_t tmp;
+  for(int row=0; row<Nc; row++)
+    for(int col=0; col<Nc; col++){
+      tmp = cdouble_new(0.0,0.0);
+      for(int k=0; k<Nc; k++)
+	tmp = cdouble_add(tmp,cdouble_mul(A.a[row][k],cdouble_conj(B.a[col][k])));
+      C.a[row][col] = tmp;
+    }
+  return C;
+}
+
 // a*A -> B
 _matrixsun m_mul_real( double a, _matrixsun A){
   _matrixsun B;
@@ -130,11 +145,11 @@ void m_print(_matrixsun A){
     for( int c=0; c<Nc; c++){
       printf("(%f, %f)\t",A.a[r][c].x, A.a[r][c].y);
     }
-      printf("%s","\n");
-    printf("\n");
-  }
     printf("%s","\n");
-  printf("\n");
+    //printf("\n");
+  }
+  printf("%s","\n");
+  //  printf("\n");
 }
 
 //should be equal to 1, but need to calculate for
@@ -202,7 +217,7 @@ _matrixsun reunitarize(_matrixsun A){
 
   //Inorder to have det A = 1 we need to divide out the phase
   cdouble_t t2 = determinant(B);
-  double th = atan2( t2.x, t2.y);
+  double th = atan2( t2.y, t2.x);
   t2 = cdouble_new(cos(th), -sin(th));
 
   for(int c=0; c<Nc; c++)

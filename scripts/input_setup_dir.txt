@@ -1,11 +1,11 @@
-5 Nc
+3 Nc
 0 Wilson Action
 8 L
 8 Nt
 4 dim
-25.0 Beta
+18.0 Beta
 0.24 epsilon
-1000 n_cor
+100 n_cor
 150 n_cf
 150 RandomSUN
 10 UpdatesPerLink

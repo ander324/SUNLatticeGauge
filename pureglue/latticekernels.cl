@@ -3,14 +3,8 @@
 #include <clRNG/mrg31k3p.clh>
 
 
-#define numRandSUN 150
-#define nx 8
-#define ny 8
-#define nz 8
-#define nt 8
-#define eps 0.34
 
-
+// Creates a bunch of random matrices along with their inverses
 __kernel void CreateRandomSUN( __global clrngMrg31k3pHostStream* streams,
 			       __global matrix* RandSUN)
 {
@@ -37,7 +31,27 @@ __kernel void CreateRandomSUN( __global clrngMrg31k3pHostStream* streams,
 
   RandSUN[gid] = A;
   RandSUN[gid+numRandSUN/2] = adjoint(A);
+
+  /* printf("(%f %f) (%f %f)\n", determinant(A).x, determinant(A).y, determinant(adjoint(A)).x, determinant(adjoint(A)).y); */
+  /* m_print(m_mul_na(A,A)); //check if it producing SUN(mats) */
+
+  /* if(gid == 0){ */
+  /*   printf("(%f %f) (%f %f)\n", determinant(A).x, determinant(A).y, determinant(adjoint(A)).x, determinant(adjoint(A)).y); */
+  /*   m_print(m_mul_na(A,A)); //check if it producing SUN(mats) */
+  /* } */
+
 }
 
 
 
+//Start the lattice from a cold start
+__kernel void LatticeColdStart(__global matrix* gauge)
+{
+  int gid = get_global_id(0);
+
+  gauge[gid] = m_ident();
+}
+
+
+//Update the gauge fields using the metropolis algorithm
+// and the Wilson Action

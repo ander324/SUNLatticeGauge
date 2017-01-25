@@ -108,6 +108,12 @@ for config in configs:
    f.close()
 
    os.system("{} > {}/Out/out.{}".format(sim_bin,sim_dir,config+n_cor))
+   f = open("{}/Out/out.{}".format(sim_dir,config+n_cor))
+   lines = f.readlines()
+   for line in lines:
+      if line.find("KEEPEPS") != -1:
+         eps = float(line.split()[1])
+   f.close()
 
 ''')
 
