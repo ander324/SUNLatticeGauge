@@ -1,0 +1,17 @@
+3 Nc
+0 Action
+8 L
+8 Nt
+4 dim
+4.5 Beta
+0.24 epsilon
+100 n_cor
+1 n_cf
+150 RandomSUN
+10 UpdatesPerLink
+4 numGlueballOps
+0 gpuid
+0.797 u0
+0 sqaq_run
+1 xi
+y
