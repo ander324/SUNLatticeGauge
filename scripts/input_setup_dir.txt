@@ -1,8 +1,8 @@
-3 Nc
-0 Wilson Action
+5 Nc
+1 Wilson Action
 8 L
 8 Nt
-4 dim
+3 dim
 18.0 Beta
 0.24 epsilon
 100 n_cor

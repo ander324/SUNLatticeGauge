@@ -5,34 +5,34 @@ from subprocess import call
 
 
 #Directory where the executable is and where the directory will be made
-PYM_dir = "/home/ander324/PureYangMills/simdata/"
-bin_dir = "/home/ander324/PureYangMills/bin/"
+PYM_dir = "/home/ander324/PureYangMills/simdata/3D/"
+bin_dir = "/home/ander324/PureYangMills/bin/3D/"
 
 action=0
-L=8
-Nt =8
-dim=4
-eps=0.38
+L=32
+Nt =1
+dim=3
+eps=0.02
 n_cor=500
 n_cf=1
 numRandSUN=150
 UpdatesPerLink=10
 numGlueOps=4
 gpuid=1
-u0=0.797
+u0=1.00
 sqaq_run=0
 xi=1
 ans="y"
 
 for Nc in range(10,11):
-    eps = 0.04
-    for i in range(4):
+    for i in range(31):
 #        i = i+1
-        Beta = Nc*Nc/(0.1*i + 0.11)
+        Beta = Nc*Nc/(0.1*i + 0.01)
+        eps = 0.02 + i*0.01
         if i%2 :
             gpuid = 1
         else:
-            gpuid = 1
+            gpuid = 0
         if action == 0:
             sim_dir = PYM_dir + "WilsonAction/"
         elif action == 1:
@@ -104,17 +104,19 @@ configs = range(startconfig, startconfig + n_cor*number_configs, n_cor)
 os.chdir(sim_dir)
 '''.format(sim_dir, sim_bin, L, Nt, dim,action, Beta, eps, n_cor, n_cf, numRandSUN, UpdatesPerLink, numGlueOps, gpuid, u0, sqaq_run, xi) + '''
 for config in configs:
+   if config != 0:
+      f = open("{}/Out/out.{}".format(sim_dir,config))
+      lines = f.readlines()
+      for line in lines:
+         if line.find("KEEPEPS") != -1:
+            eps = float(line.split()[1])
+      f.close()
+
    f = open("parameters", 'w')
    f.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(L, L, L, Nt, dim, Beta, eps, n_cor, n_cf, numRandSUN, UpdatesPerLink, numGlueOps, gpuid, action, u0, sqaq_run, xi, sim_dir, config, config))
    f.close()
 
    os.system("{} > {}/Out/out.{}".format(sim_bin,sim_dir,config+n_cor))
-   f = open("{}/Out/out.{}".format(sim_dir,config+n_cor))
-   lines = f.readlines()
-   for line in lines:
-      if line.find("KEEPEPS") != -1:
-         eps = float(line.split()[1])
-   f.close()
 
 ''')
 

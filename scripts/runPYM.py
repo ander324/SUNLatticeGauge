@@ -14,18 +14,18 @@ class PYMThread(threading.Thread):
         print "Running " + self.binary
         os.system(self.binary)
 
-maxThreads = 2
+maxThreads = 1
 
 
-PYM_dir = "/home/ander324/PureYangMills/simdata/"
-run_bin = "meas2_PYM_metro.py 20000 50"
+PYM_dir = "/home/ander324/PureYangMills/simdata/3D/"
+run_bin = "run_PYM_metro.py 0 200"
 action=0
 L=8
-Nt =8
+Nt =1
 
 for Nc in range(10,11):
-    for i in range(4):
-        l = 0.1*i + 0.11
+    for i in range(1):
+        l = 0.1*i + 3.01
         Beta = Nc*Nc/l
 
         if action == 0:
